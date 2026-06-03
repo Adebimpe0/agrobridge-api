@@ -85,3 +85,6 @@ def best_time(commodity: str):
         "commodity": commodity,
         "best_month_to_sell": month
     }
+    @app.get("/health")
+def health():
+    return {"status": "ok"}
