@@ -30,6 +30,10 @@ class PredictionInput(BaseModel):
 def root():
     return {"message": "AgroBridge Price Prediction API is running 🌾"}
 
+@app.get("/health")
+def health():
+    return {"status": "ok"}
+
 @app.post("/predict")
 def predict(data: PredictionInput):
     input_data = pd.DataFrame(columns=feature_columns)
@@ -85,6 +89,3 @@ def best_time(commodity: str):
         "commodity": commodity,
         "best_month_to_sell": month
     }
-    @app.get("/health")
-def health():
-    return {"status": "ok"}
