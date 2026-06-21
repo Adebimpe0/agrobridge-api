@@ -46,7 +46,7 @@ def predict(data: PredictionInput):
     input_data['MIN_DIST_S'] = data.min_dist_s
     input_data['MEAN_DIST_S'] = data.mean_dist_s
 
-    commodity_col = f'COMMODITY_{data.commodity.capitalize()}'
+    commodity_col = f'COMMODITY_{data.commodity}'
     state_col = f'STATES_{data.state}'
 
     if commodity_col in input_data.columns:
