@@ -65,11 +65,12 @@ def predict(data: PredictionInput):
         advice = "Prices are steady"
 
     return {
-        "commodity": data.commodity,
-        "state": data.state,
-        "direction": direction,
-        "advice": advice
-    }
+    "commodity": data.commodity,
+    "state": data.state,
+    "current_price": data.lag1,
+    "direction": direction,
+    "advice": advice
+}
 
 @app.get("/best-time/{commodity}")
 def best_time(commodity: str):
