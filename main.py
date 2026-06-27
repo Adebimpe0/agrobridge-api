@@ -15,6 +15,11 @@ with open('agrobridge_label_encoder_v2.pkl', 'rb') as f:
 with open('agrobridge_features_v2.pkl', 'rb') as f:
     feature_columns = pickle.load(f)
 
+# Load historical statistics
+with open('agrobridge_historical_stats.pkl', 'rb') as f:
+    historical_stats = pickle.load(f)
+
+
 class PredictionInput(BaseModel):
     commodity: str
     state: str
@@ -26,18 +31,22 @@ class PredictionInput(BaseModel):
     min_dist_s: float = 160.25
     mean_dist_s: float = 659.08
 
+
 @app.get("/")
 def root():
     return {"message": "AgroBridge Price Prediction API is running 🌾"}
+
 
 @app.get("/health")
 def health():
     return {"status": "ok"}
 
+
 @app.post("/predict")
 def predict(data: PredictionInput):
     input_data = pd.DataFrame(columns=feature_columns)
     input_data.loc[0] = 0
+
     input_data['MONTH'] = data.month
     input_data['YEAR'] = data.year
     input_data['LAG_1'] = data.lag1
@@ -51,6 +60,7 @@ def predict(data: PredictionInput):
 
     if commodity_col in input_data.columns:
         input_data[commodity_col] = 1
+
     if state_col in input_data.columns:
         input_data[state_col] = 1
 
@@ -64,13 +74,22 @@ def predict(data: PredictionInput):
     else:
         advice = "Prices are steady"
 
+    commodity_stats = historical_stats.get(data.commodity.capitalize(), {})
+    highest = commodity_stats.get("HIGHEST_PRICE", "N/A")
+    lowest = commodity_stats.get("LOWEST_PRICE", "N/A")
+
     return {
-    "commodity": data.commodity,
-    "state": data.state,
-    "current_price": data.lag1,
-    "direction": direction,
-    "advice": advice
-}
+        "commodity": data.commodity,
+        "state": data.state,
+        "unit": "per kg",
+        "current_price": data.lag1,
+        "previous_price": data.lag3,
+        "highest_price_recorded": highest,
+        "lowest_price_recorded": lowest,
+        "direction": direction,
+        "advice": advice
+    }
+
 
 @app.get("/best-time/{commodity}")
 def best_time(commodity: str):
@@ -85,7 +104,9 @@ def best_time(commodity: str):
         "Millet": "August",
         "Sorghum": "September"
     }
+
     month = best_months.get(commodity, "Data not available")
+
     return {
         "commodity": commodity,
         "best_month_to_sell": month
