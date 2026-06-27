@@ -32,6 +32,18 @@ class PredictionInput(BaseModel):
     mean_dist_s: float = 659.08
 
 
+class PredictionResponse(BaseModel):
+    commodity: str
+    state: str
+    unit: str
+    current_price: float
+    previous_price: float
+    highest_price_recorded: float
+    lowest_price_recorded: float
+    direction: str
+    advice: str
+
+
 @app.get("/")
 def root():
     return {"message": "AgroBridge Price Prediction API is running 🌾"}
@@ -42,7 +54,7 @@ def health():
     return {"status": "ok"}
 
 
-@app.post("/predict")
+@app.post("/predict", response_model=PredictionResponse)
 def predict(data: PredictionInput):
     input_data = pd.DataFrame(columns=feature_columns)
     input_data.loc[0] = 0
@@ -94,20 +106,4 @@ def predict(data: PredictionInput):
 @app.get("/best-time/{commodity}")
 def best_time(commodity: str):
     best_months = {
-        "Tomatoes": "September",
-        "Yam": "June",
-        "Maize": "July",
-        "Onions": "November",
-        "Rice (local)": "September",
-        "Beans (red)": "June",
-        "Groundnuts": "September",
-        "Millet": "August",
-        "Sorghum": "September"
-    }
-
-    month = best_months.get(commodity, "Data not available")
-
-    return {
-        "commodity": commodity,
-        "best_month_to_sell": month
-    }
+        "Tomatoes": "
