@@ -106,4 +106,20 @@ def predict(data: PredictionInput):
 @app.get("/best-time/{commodity}")
 def best_time(commodity: str):
     best_months = {
-        "Tomatoes": "
+        "Tomatoes": "September",
+        "Yam": "June",
+        "Maize": "July",
+        "Onions": "November",
+        "Rice (local)": "September",
+        "Beans (red)": "June",
+        "Groundnuts": "September",
+        "Millet": "August",
+        "Sorghum": "September"
+    }
+
+    month = best_months.get(commodity, "Data not available")
+
+    return {
+        "commodity": commodity,
+        "best_month_to_sell": month
+    }
