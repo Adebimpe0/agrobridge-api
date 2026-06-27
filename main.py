@@ -114,7 +114,7 @@ def best_time(commodity: str):
         "Beans (red)": "June",
         "Groundnuts": "September",
         "Millet": "August",
-        "Sorghum": "September"
+        "Sorghum": "September",
     }
 
     month = best_months.get(commodity, "Data not available")
